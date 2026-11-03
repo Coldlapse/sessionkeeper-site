@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy · Session Keeper for Claude Code</title>
+  <meta name="title-ko" content="개인정보 처리방침 · Session Keeper for Claude Code" />
+  <meta name="title-en" content="Privacy Policy · Session Keeper for Claude Code" />
+  <meta name="description" content="Session Keeper for Claude Code does not collect or transmit any personal data. It has no network access." />
+  <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="theme-color" content="#3b6ea8" />
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    (function () {
+      var l = null; try { l = localStorage.getItem('lang'); } catch (e) {}
+      var q = new URLSearchParams(location.search).get('lang');
+      l = q === 'ko' || q === 'en' ? q : l || ((navigator.language || '').toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en');
+      document.documentElement.dataset.lang = l; document.documentElement.lang = l;
+    })();
+  </script>
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="./"><img src="assets/icon-128.png" alt="" />Session Keeper <small>for Claude Code</small></a>
+      <nav class="nav">
+        <a href="./"><span lang="ko">홈</span><span lang="en">Home</span></a>
+        <a href="https://github.com/Coldlapse/session-keeper-for-claude-code">GitHub</a>
+      </nav>
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" data-set-lang="ko">KO</button>
+        <button type="button" data-set-lang="en">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="doc">
+    <div class="wrap">
+      <!-- English -->
+      <article lang="en">
+        <h1>Privacy Policy</h1>
+        <p class="meta">Session Keeper for Claude Code · Last updated: November 4, 2026</p>
+        <p class="summary"><b>Session Keeper for Claude Code ("the app") does not collect, store on any server, or transmit any personal data.</b> The app contains no networking code and never connects to the internet.</p>
+
+        <h2>Information the app reads on your PC</h2>
+        <ul>
+          <li>The list of running processes and, for each, its executable path, command line and working folder. Used to find Claude Code and Claude Desktop.</li>
+          <li>The titles and positions of Claude Desktop windows. Used to restore the window layout.</li>
+          <li>The beginning of conversation history files under <code>%USERPROFILE%\.claude\projects\</code>. Used to show each session's title (its first prompt).</li>
+        </ul>
+
+        <h2>Information the app writes on your PC</h2>
+        <ul>
+          <li>Snapshots, settings, logs and session-mapping records, in the app's data folder (its path is shown on the Settings tab).</li>
+          <li><code>%USERPROFILE%\.claude\settings.json</code>, only to add or remove the optional SessionStart hook when you press the hook install or remove button. Before adding the hook for the first time the app saves a backup next to it as <code>settings.json.csk-bak</code>. If the app has been moved to a different folder, it updates the path of the hook it installed earlier.</li>
+          <li>Portable version only, if you turn on "Start with Windows": a value under <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code>. The Microsoft Store version uses the standard Windows startup task instead, which you can turn off in Task Manager or Settings.</li>
+        </ul>
+        <p>None of this information leaves your PC.</p>
+
+        <h2>Third parties</h2>
+        <p>The app does not share data with anyone, contains no analytics or advertising, and makes no purchases. When it restores a session it starts Claude Code or Claude Desktop on your PC; how those programs handle your data is covered by Anthropic's own policies.</p>
+
+        <h2>Deleting your data</h2>
+        <ul>
+          <li>Press "Remove hook" on the Settings tab, then delete the app's data folder. That removes everything the app created.</li>
+          <li>Uninstalling the Microsoft Store version also deletes its data folder. Remove the hook in the app <b>before</b> uninstalling; otherwise delete the <code>csk-hook.exe</code> entry from <code>settings.json</code> yourself.</li>
+        </ul>
+
+        <h2>Changes</h2>
+        <p>If this policy changes, the new version will be posted on this page with a new date.</p>
+
+        <h2>Contact</h2>
+        <p>Open an issue at <a href="https://github.com/Coldlapse/session-keeper-for-claude-code/issues">github.com/Coldlapse/session-keeper-for-claude-code/issues</a>.</p>
+      </article>
+
+      <!-- 한국어 -->
+      <article lang="ko">
+        <h1>개인정보 처리방침</h1>
+        <p class="meta">Session Keeper for Claude Code · 최종 수정: 2026년 11월 4일</p>
+        <p class="summary"><b>Session Keeper for Claude Code(이하 "앱")는 어떤 개인정보도 수집하거나, 서버에 저장하거나, 외부로 보내지 않습니다.</b> 앱에는 네트워크 통신 기능이 없고 인터넷에 접속하지 않습니다.</p>
+
+        <h2>앱이 이 PC에서 읽는 정보</h2>
+        <ul>
+          <li>실행 중인 프로세스 목록과 각 프로세스의 실행 경로, 명령줄, 작업 폴더. Claude Code와 Claude Desktop을 찾는 데 씁니다.</li>
+          <li>Claude Desktop 창의 제목과 위치. 창 배치를 복원하는 데 씁니다.</li>
+          <li><code>%USERPROFILE%\.claude\projects\</code> 안 대화 기록 파일의 앞부분. 세션 제목(첫 질문)을 표시하는 데 씁니다.</li>
+        </ul>
+
+        <h2>앱이 이 PC에 쓰는 정보</h2>
+        <ul>
+          <li>스냅샷, 설정, 로그, 세션 매핑 기록. 앱 데이터 폴더에 저장합니다(경로는 설정 탭에 표시).</li>
+          <li><code>%USERPROFILE%\.claude\settings.json</code>. 훅 설치·제거 버튼을 누를 때만 선택 기능인 SessionStart 훅을 넣거나 뺍니다. 처음 넣기 전에 같은 폴더에 <code>settings.json.csk-bak</code>으로 백업합니다. 앱을 다른 폴더로 옮겼다면, 앞서 설치한 훅의 경로를 새 위치로 고칩니다.</li>
+          <li>포터블 버전에서 "Windows 시작 시 실행"을 켠 경우에만 <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code>에 값을 씁니다. Microsoft Store 버전은 Windows 표준 시작 작업을 쓰며, 작업 관리자나 설정에서 끌 수 있습니다.</li>
+        </ul>
+        <p>이 정보는 모두 PC 밖으로 나가지 않습니다.</p>
+
+        <h2>제3자</h2>
+        <p>앱은 누구와도 데이터를 공유하지 않고, 분석·광고 기능이나 결제가 없습니다. 세션을 복원할 때는 이 PC에서 Claude Code나 Claude Desktop을 실행할 뿐이며, 그 프로그램들의 데이터 처리는 Anthropic의 정책을 따릅니다.</p>
+
+        <h2>삭제</h2>
+        <ul>
+          <li>설정 탭에서 "훅 제거"를 누른 뒤 앱 데이터 폴더를 지우면 앱이 남긴 것이 모두 지워집니다.</li>
+          <li>Microsoft Store 버전은 앱을 제거하면 데이터 폴더도 함께 지워집니다. 훅은 제거하기 <b>전에</b> 앱에서 해제하세요. 이미 제거했다면 <code>settings.json</code>에서 <code>csk-hook.exe</code> 항목을 직접 지우면 됩니다.</li>
+        </ul>
+
+        <h2>변경</h2>
+        <p>이 방침이 바뀌면 새 날짜와 함께 이 페이지에 올립니다.</p>
+
+        <h2>문의</h2>
+        <p><a href="https://github.com/Coldlapse/session-keeper-for-claude-code/issues">github.com/Coldlapse/session-keeper-for-claude-code/issues</a>에 이슈를 남겨 주세요.</p>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>
+        <span lang="ko">비공식 도구이며 Anthropic과 제휴 관계가 없습니다.</span>
+        <span lang="en">Unofficial and not affiliated with Anthropic.</span>
+      </span>
+      <span>© 2026 coldlapse · MIT</span>
+    </div>
+  </footer>
+</body>
+</html>

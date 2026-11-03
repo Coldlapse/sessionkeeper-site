@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Session Keeper for Claude Code</title>
+  <meta name="title-ko" content="Session Keeper for Claude Code · 재부팅해도 세션은 그대로" />
+  <meta name="title-en" content="Session Keeper for Claude Code · Reboot without losing your sessions" />
+  <meta name="description" content="Windows tray app that snapshots your Claude Code sessions and Claude Desktop windows and restores them after a reboot. Free, open source, no network access. Unofficial, not affiliated with Anthropic." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Session Keeper for Claude Code" />
+  <meta property="og:url" content="https://sessionkeeper.coldlapse.dev/" />
+  <meta property="og:title" content="Session Keeper for Claude Code" />
+  <meta property="og:description" content="Snapshot your Claude Code sessions and Claude Desktop windows, reboot, and get them all back. Free Windows tray app. Unofficial." />
+  <meta property="og:image" content="https://sessionkeeper.coldlapse.dev/apple-touch-icon.png" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="theme-color" content="#3b6ea8" />
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    // 첫 그림 전에 언어를 정해 깜빡임을 막는다 (나머지는 main.js)
+    (function () {
+      var l = null; try { l = localStorage.getItem('lang'); } catch (e) {}
+      var q = new URLSearchParams(location.search).get('lang');
+      l = q === 'ko' || q === 'en' ? q : l || ((navigator.language || '').toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en');
+      document.documentElement.dataset.lang = l; document.documentElement.lang = l;
+    })();
+  </script>
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-windows" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5.6 10.4 4.5v7H3zM11.5 4.3 21 3v8.5h-9.5zM3 12.5h7.4v7.1L3 18.5zM11.5 12.5H21V21l-9.5-1.3z"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1.5a10.5 10.5 0 0 0-3.3 20.5c.5.1.7-.2.7-.5v-1.8c-2.9.6-3.5-1.4-3.5-1.4-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1 .1 1.6 1.1 1.6 1.1.9 1.6 2.5 1.2 3.1.9.1-.7.4-1.2.7-1.4-2.3-.3-4.8-1.2-4.8-5.2 0-1.1.4-2.1 1.1-2.8-.1-.3-.5-1.4.1-2.8 0 0 .9-.3 2.9 1.1a10 10 0 0 1 5.2 0c2-1.4 2.9-1.1 2.9-1.1.6 1.4.2 2.5.1 2.8.7.8 1.1 1.7 1.1 2.8 0 4-2.5 4.9-4.8 5.2.4.3.7 1 .7 2v2.9c0 .3.2.6.7.5A10.5 10.5 0 0 0 12 1.5z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-restart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="i-tabs" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M3 8h18v12H3zM3 8V5h6l1 3M10 8V5h5l1 3"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  </svg>
+
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="./"><img src="assets/icon-128.png" alt="" />Session Keeper <small>for Claude Code</small></a>
+      <nav class="nav">
+        <a href="#how"><span lang="ko">사용법</span><span lang="en">How it works</span></a>
+        <a href="#features"><span lang="ko">기능</span><span lang="en">Features</span></a>
+        <a href="#install"><span lang="ko">설치</span><span lang="en">Install</span></a>
+        <a href="privacy.html"><span lang="ko">개인정보</span><span lang="en">Privacy</span></a>
+      </nav>
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" data-set-lang="ko">KO</button>
+        <button type="button" data-set-lang="en">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div>
+          <p class="eyebrow">Windows · Free · Open source</p>
+          <h1>
+            <span lang="ko">재부팅해도<br />Claude Code 세션은 그대로</span>
+            <span lang="en">Reboot.<br />Your Claude Code sessions come back.</span>
+          </h1>
+          <p class="lead">
+            <span lang="ko">열어 둔 Claude Code 세션과 Claude Desktop 창을 저장해 두었다가, 다시 로그인하면 폴더와 대화까지 그대로 되살립니다. 탭을 하나씩 다시 여는 일은 이제 그만.</span>
+            <span lang="en">Session Keeper saves every running Claude Code session and your Claude Desktop window layout, then brings them back after you sign in again: same folders, same conversations. No more reopening tabs one by one.</span>
+          </p>
+          <div class="cta">
+            <a class="btn primary disabled" href="#install" aria-disabled="true"><svg><use href="#i-windows" /></svg><span lang="ko">Microsoft Store (출시 예정)</span><span lang="en">Microsoft Store (coming soon)</span></a>
+            <a class="btn" href="https://github.com/Coldlapse/session-keeper-for-claude-code/releases"><svg><use href="#i-download" /></svg><span lang="ko">포터블 zip</span><span lang="en">Portable zip</span></a>
+            <a class="btn" href="https://github.com/Coldlapse/session-keeper-for-claude-code"><svg><use href="#i-github" /></svg>GitHub</a>
+          </div>
+          <p class="fine">
+            <span lang="ko">비공식 도구입니다. Anthropic과 제휴하거나 보증받은 관계가 아닙니다.</span>
+            <span lang="en">Unofficial. Not affiliated with or endorsed by Anthropic.</span>
+          </p>
+        </div>
+
+        <!-- 앱 창 모형. 데모 데이터 -->
+        <div class="app-window" role="img" aria-label="Session Keeper main window showing running sessions">
+          <div class="app-titlebar"><img src="assets/icon-128.png" alt="" /><span>Session Keeper for Claude Code 1.0.0</span><span class="dots">— ▢ ✕</span></div>
+          <div class="app-menu">
+            <span lang="ko">새로고침</span><span lang="en">Refresh</span>
+            <span lang="ko">스냅샷 저장</span><span lang="en">Save snapshot</span>
+            <span lang="ko">스냅샷 → 재부팅</span><span lang="en">Snapshot → Restart</span>
+            <span lang="ko">스냅샷 → 시스템 종료</span><span lang="en">Snapshot → Shut down</span>
+          </div>
+          <div class="app-tabs">
+            <span class="on" lang="ko">실행 중</span><span class="on" lang="en">Running</span>
+            <span lang="ko">스냅샷</span><span lang="en">Snapshots</span>
+            <span lang="ko">설정</span><span lang="en">Settings</span>
+            <span lang="ko">로그</span><span lang="en">Log</span>
+          </div>
+          <div class="app-body">
+            <div class="app-row head"><span></span><span><span lang="ko">폴더 / 위치</span><span lang="en">Folder / position</span></span><span><span lang="ko">세션 ID</span><span lang="en">Session ID</span></span><span><span lang="ko">ID 출처</span><span lang="en">ID source</span></span></div>
+            <div class="app-row group"><span>▾</span><span><span lang="ko">Claude Code 세션 (4)</span><span lang="en">Claude Code sessions (4)</span></span></div>
+            <div class="app-row"><span></span><span>C:\dev\web-app</span><span class="mono">3f2a91c0</span><span><span class="tag" lang="ko">훅</span><span class="tag" lang="en">hook</span></span></div>
+            <div class="app-row"><span></span><span>C:\dev\api-server</span><span class="mono">8b07d4e2</span><span><span class="tag" lang="ko">훅</span><span class="tag" lang="en">hook</span></span></div>
+            <div class="app-row"><span></span><span>D:\notes\research</span><span class="mono">c51e7a3d</span><span><span class="tag" lang="ko">훅</span><span class="tag" lang="en">hook</span></span></div>
+            <div class="app-row"><span></span><span>D:\games\mod-tools</span><span class="mono">e9406b17</span><span><span class="tag" lang="ko">인자</span><span class="tag" lang="en">args</span></span></div>
+            <div class="app-row group"><span>▾</span><span><span lang="ko">Claude Desktop 창 (2)</span><span lang="en">Claude Desktop windows (2)</span></span></div>
+            <div class="app-row"><span></span><span>Claude</span><span class="mono">120, 80 · 1280×900</span><span></span></div>
+            <div class="app-row"><span></span><span>Project notes</span><span class="mono">-1600, 120 · 1100×1000</span><span></span></div>
+          </div>
+          <div class="app-status"><span lang="ko">자동저장 완료 · 다음 저장 5분 후</span><span lang="en">Autosaved · next in 5 min</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="alt" id="how">
+      <div class="wrap">
+        <h2><span lang="ko">버튼 하나로 저장하고, 로그인하면 돌아옵니다</span><span lang="en">One click before, nothing after</span></h2>
+        <p class="sub">
+          <span lang="ko">Windows 업데이트나 드라이버 설치로 재부팅해야 할 때, 터미널마다 폴더를 찾아가 <code>claude --resume</code>을 칠 필요가 없습니다.</span>
+          <span lang="en">When Windows Update or a driver install wants a restart, you don't have to cd into every folder and type <code>claude --resume</code> again.</span>
+        </p>
+        <div class="steps">
+          <div class="step">
+            <h3><span lang="ko">스냅샷 → 재부팅</span><span lang="en">Snapshot → Restart</span></h3>
+            <p><span lang="ko">지금 열린 세션의 폴더와 세션 ID, Desktop 창 위치를 저장하고 재부팅을 예약합니다. 마음이 바뀌면 취소할 수 있습니다.</span><span lang="en">Saves each session's folder and ID plus Desktop window positions, then schedules the restart. You can still cancel.</span></p>
+          </div>
+          <div class="step">
+            <h3><span lang="ko">로그인</span><span lang="en">Sign in</span></h3>
+            <p><span lang="ko">앱이 트레이에서 시작하고 잠시(기본 20초) 기다립니다. 그 사이 트레이 메뉴에서 복원을 취소할 수 있습니다.</span><span lang="en">The app starts in the tray and waits a moment (20 s by default). You can cancel the restore from the tray menu.</span></p>
+          </div>
+          <div class="step">
+            <h3><span lang="ko">그대로 복원</span><span lang="en">Everything's back</span></h3>
+            <p><span lang="ko">세션마다 원래 폴더에서 <code>claude --resume &lt;ID&gt;</code>로 대화를 이어 엽니다. Windows Terminal 탭으로 묶거나 창을 따로 열 수 있습니다.</span><span lang="en">Each session reopens in its own folder with <code>claude --resume &lt;ID&gt;</code>, grouped as Windows Terminal tabs or as separate windows.</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="wrap">
+        <h2><span lang="ko">기능</span><span lang="en">Features</span></h2>
+        <p class="sub"><span lang="ko">가볍게 트레이에 머무르며, 필요한 순간에만 나섭니다.</span><span lang="en">Sits quietly in the tray and steps in only when you need it.</span></p>
+        <div class="features">
+          <div class="feature"><div class="ico"><svg><use href="#i-eye" /></svg></div><div>
+            <h3><span lang="ko">실행 중인 세션 한눈에</span><span lang="en">See what's running</span></h3>
+            <p><span lang="ko">세션별 작업 폴더, 세션 ID, 첫 질문, 셸과 터미널 종류. Desktop 창 위치와 상태까지.</span><span lang="en">Folder, session ID, first prompt, shell and terminal for every session, plus Desktop window placement.</span></p>
+          </div></div>
+          <div class="feature"><div class="ico"><svg><use href="#i-restart" /></svg></div><div>
+            <h3><span lang="ko">재부팅 후 자동 복원</span><span lang="en">Restore after restart</span></h3>
+            <p><span lang="ko">스냅샷과 재부팅(또는 시스템 종료)을 한 번에. 다음 로그인 때 자동으로 되살립니다.</span><span lang="en">Snapshot and restart (or shut down) in one step; the next sign-in restores automatically.</span></p>
+          </div></div>
+          <div class="feature"><div class="ico"><svg><use href="#i-clock" /></svg></div><div>
+            <h3><span lang="ko">자동저장</span><span lang="en">Autosave</span></h3>
+            <p><span lang="ko">기본 5분마다 저장해 두므로, 예고 없이 재부팅되어도 직전 상태가 남습니다.</span><span lang="en">Saves every 5 minutes by default, so an unexpected reboot still leaves you a recent state.</span></p>
+          </div></div>
+          <div class="feature"><div class="ico"><svg><use href="#i-check" /></svg></div><div>
+            <h3><span lang="ko">골라서 복원</span><span lang="en">Pick what to restore</span></h3>
+            <p><span lang="ko">지난 스냅샷을 열어 원하는 세션만 체크해서 되살립니다.</span><span lang="en">Open any saved snapshot and tick only the sessions you want back.</span></p>
+          </div></div>
+          <div class="feature"><div class="ico"><svg><use href="#i-tabs" /></svg></div><div>
+            <h3><span lang="ko">Windows Terminal 탭</span><span lang="en">Windows Terminal tabs</span></h3>
+            <p><span lang="ko">복원한 세션을 한 창의 탭으로 묶어 엽니다. 셸은 PowerShell 7이나 Windows PowerShell.</span><span lang="en">Restored sessions open as tabs in one window, in PowerShell 7 or Windows PowerShell.</span></p>
+          </div></div>
+          <div class="feature"><div class="ico"><svg><use href="#i-link" /></svg></div><div>
+            <h3><span lang="ko">정확한 세션 짝짓기 (선택)</span><span lang="en">Exact session mapping (optional)</span></h3>
+            <p><span lang="ko">Claude Code의 SessionStart 훅을 설치하면 같은 폴더에서 세션을 여러 개 돌려도 정확히 구분합니다.</span><span lang="en">Install the Claude Code SessionStart hook to tell apart several sessions running in the same folder.</span></p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="alt">
+      <div class="wrap">
+        <h2><span lang="ko">예고 없는 재부팅에는 이렇게</span><span lang="en">When Windows restarts on its own</span></h2>
+        <p class="sub"><span lang="ko">업데이트나 정전으로 갑자기 재부팅됐을 때 무엇을 할지 설정에서 고릅니다. 앱의 "스냅샷 → 재부팅"으로 한 재부팅은 항상 자동으로 복원합니다.</span><span lang="en">Choose what happens after an update or power cut restarts the PC. Restarts you start with "Snapshot → Restart" always restore automatically.</span></p>
+        <div class="modes">
+          <div class="mode"><b><span lang="ko">복원할지 묻기</span><span lang="en">Ask first</span><span class="default">DEFAULT</span></b><p><span lang="ko">마지막 자동저장 시각을 보여 주고 복원할지 묻습니다.</span><span lang="en">Shows when the last autosave was taken and asks before restoring.</span></p></div>
+          <div class="mode"><b><span lang="ko">묻지 않고 복원</span><span lang="en">Restore automatically</span></b><p><span lang="ko">대기 시간 뒤 바로 복원합니다. 트레이에서 취소할 수 있습니다.</span><span lang="en">Restores after the wait. Cancel from the tray if you change your mind.</span></p></div>
+          <div class="mode"><b><span lang="ko">아무것도 안 하기</span><span lang="en">Do nothing</span></b><p><span lang="ko">자동저장만 계속하고 복원은 직접 고를 때만 합니다.</span><span lang="en">Keeps autosaving, restores only when you choose a snapshot yourself.</span></p></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap cols">
+        <div>
+          <h2><span lang="ko">개인정보</span><span lang="en">Privacy</span></h2>
+          <p class="sub" style="margin-bottom:16px"><span lang="ko">네트워크 통신 기능이 없습니다. 아무것도 수집하거나 보내지 않습니다. 모든 기록은 이 PC의 앱 데이터 폴더에만 남습니다.</span><span lang="en">The app has no networking code. Nothing is collected or sent anywhere; everything stays in the app's data folder on your PC.</span></p>
+          <a href="privacy.html"><span lang="ko">개인정보 처리방침 전문 →</span><span lang="en">Read the privacy policy →</span></a>
+        </div>
+        <div>
+          <h2><span lang="ko">알아 둘 점</span><span lang="en">Good to know</span></h2>
+          <ul class="plain">
+            <li><span lang="ko"><b>Desktop 창 안의 대화</b>는 밖에서 읽을 수 없어 복원하지 않습니다. 창 배치와 실행 여부만 되돌립니다.</span><span lang="en"><b>Conversations inside Claude Desktop</b> can't be read from outside, so only window placement is restored.</span></li>
+            <li><span lang="ko"><b>응답을 생성하는 도중</b>에 재부팅하면 그 응답은 끊깁니다. 대화 기록은 남아 있어 이어 갈 수 있습니다.</span><span lang="en"><b>A reply being generated</b> during the restart is cut off; the conversation itself is kept and can be resumed.</span></li>
+            <li><span lang="ko"><b>앱 화면은 현재 한국어만</b> 지원합니다.</span><span lang="en"><b>The app's interface is currently Korean only.</b> The window shown above is translated for this page.</span></li>
+            <li><span lang="ko"><b>터미널 창의 화면 위치</b>는 복원하지 않습니다.</span><span lang="en"><b>Terminal window positions</b> are not restored.</span></li>
+            <li><span lang="ko"><b>오래 쉬었던 대화</b>는 Claude Code가 "Resume this conversation?"을 물을 수 있습니다. Resume을 고르면 이어집니다.</span><span lang="en"><b>Long-idle conversations</b> may get a "Resume this conversation?" prompt from Claude Code. Pick Resume.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="alt" id="install">
+      <div class="wrap">
+        <h2><span lang="ko">설치</span><span lang="en">Install</span></h2>
+        <p class="sub"><span lang="ko">Windows 10 2004 이상 또는 Windows 11, x64.</span><span lang="en">Windows 10 2004 or later, or Windows 11, x64.</span></p>
+        <div class="install">
+          <div class="card">
+            <h3>Microsoft Store</h3>
+            <p><span lang="ko">자동 업데이트, 로그인 시 자동 실행. 심사를 준비하고 있습니다.</span><span lang="en">Automatic updates and start at sign-in. Submission in progress.</span></p>
+            <a class="btn disabled" href="#install" aria-disabled="true"><svg><use href="#i-windows" /></svg><span lang="ko">출시 예정</span><span lang="en">Coming soon</span></a>
+          </div>
+          <div class="card">
+            <h3><span lang="ko">포터블 zip</span><span lang="en">Portable zip</span></h3>
+            <p><span lang="ko">압축을 풀고 <code>ClaudeSessionKeeper.exe</code>를 실행합니다. 서명되지 않은 exe라 SmartScreen이 뜨면 "추가 정보 → 실행"을 누르세요.</span><span lang="en">Unzip and run <code>ClaudeSessionKeeper.exe</code>. It's unsigned, so if SmartScreen appears choose "More info → Run anyway".</span></p>
+            <a class="btn" href="https://github.com/Coldlapse/session-keeper-for-claude-code/releases"><svg><use href="#i-download" /></svg>GitHub Releases</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>
+        <span lang="ko">비공식 도구이며 Anthropic과 제휴 관계가 없습니다. "Claude", "Claude Code"는 Anthropic의 상표입니다.</span>
+        <span lang="en">Unofficial and not affiliated with Anthropic. "Claude" and "Claude Code" are trademarks of Anthropic.</span>
+      </span>
+      <span>© 2026 coldlapse · MIT · <a href="privacy.html"><span lang="ko">개인정보 처리방침</span><span lang="en">Privacy</span></a> · <a href="https://github.com/Coldlapse/session-keeper-for-claude-code">GitHub</a></span>
+    </div>
+  </footer>
+</body>
+</html>
